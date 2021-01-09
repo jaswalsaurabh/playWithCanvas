@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 Canvas</title>
+    <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/900px-Octicons-mark-github.svg.png" type="png">
+  </head>
+  <body>
+    <canvas id="draw" width="800" height="800"></canvas>
+    <script>
+      // canvas on a web is like a ms paint
+      const canvas = document.getElementById("draw");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      ctx.strokeStyle = "#BADA55";
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.lineWidth = 100;
+    //   ctx.globalCompositeOperation = 'multiply';
+
+      let isDrawing = false;
+      let lastX = 0;
+      let lastY = 0;
+      let hue = 0;
+      let direction = true;
+      function draw(e) {
+        if (!isDrawing) return; //it stops from running when not drawing
+        console.log(e);
+        ctx.strokeStyle = `hsl(${hue},100%,50%)`;
+        ctx.lineWidth = hue;
+        ctx.beginPath();
+        // start from
+        ctx.moveTo(lastX, lastY);
+        // goes to
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+        hue++;
+        if (hue >= 360) {
+          hue = 0;
+        }
+        if (ctx.lineWidth >= 500 || ctx.lineWidth <= 1) {
+          direction = !direction;
+        }
+        if (direction) {
+          ctx.lineWidth++;
+        } else {
+          ctx.lineWidth--;
+        }
+      }
+      canvas.addEventListener("mousemove", draw);
+      canvas.addEventListener("mousedown", (e) => {
+        isDrawing = true;
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+      });
+      canvas.addEventListener("mouseup", () => (isDrawing = false));
+      canvas.addEventListener("mouseout", () => (isDrawing = false));
+    </script>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </body>
+</html>
